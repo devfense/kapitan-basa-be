@@ -6,6 +6,7 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   app.setGlobalPrefix('api')
+  app.enableCors();
   
   const config = new DocumentBuilder()
     .setTitle('Kapitan Basa Backend API')
@@ -18,6 +19,6 @@ async function bootstrap() {
 
   
 
-  await app.listen(5000);
+  await app.listen(process.env.PORT ||5000);
 }
 bootstrap();
