@@ -1,7 +1,7 @@
 import { RegisterStudentDto } from '../models/dto/register-student.dto';
 import { UpdateStudentDto } from '../models/dto/update-student.dto';
-import { ResponseStatus } from '../../global-interfaces/response-status.interface'
-import { Body, Controller, HttpException, HttpStatus, Post, ValidationPipe, Param, Get, Query, Put } from '@nestjs/common';
+import { ResponseStatus } from '../../../global-interfaces/response-status.interface'
+import { Body, Controller, Post, ValidationPipe, Param, Get, Query, Put, Delete } from '@nestjs/common';
 import { StudentService } from '../services/student.service';
 
 @Controller('student')
@@ -27,5 +27,10 @@ export class StudentController {
   @Put('update')
   async update(@Body(ValidationPipe) put: UpdateStudentDto): Promise<ResponseStatus>{
     return this.studentService.updateStudent(put)
+  }
+
+  @Delete('/delete-record/:id')
+  async delete(@Param('id') id: number): Promise<ResponseStatus>{
+    return this.studentService.deleteStudent(id)
   }
 }

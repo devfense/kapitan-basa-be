@@ -6,14 +6,12 @@ import { RegisterStudentDto } from '../models/dto/register-student.dto';
 import { UpdateStudentDto } from '../models/dto/update-student.dto';
 
 import * as bcrypt from 'bcrypt'
-import { Equal } from "typeorm";
-
 
 //Constants
-import { MESSAGES } from '../../constants/messages'
+import { MESSAGES } from '../../../constants/messages'
 
 //Helpers
-import { responseOk, responseCreatedUpdated, responseNotFound, responseBadRequest } from '../../helpers/Helpers'
+import { responseOk, responseCreatedUpdated, responseNotFound, responseBadRequest, removePasswordField } from '../../../helpers/Helpers'
 
 @Injectable()
 export class StudentService {
@@ -27,7 +25,9 @@ export class StudentService {
             const { 
                 studentID,
                 firstName,
+                middleName,
                 lastName,
+                suffix,
                 grade,
                 section,
                 username,
@@ -44,7 +44,8 @@ export class StudentService {
             newStudent.section = section;
             newStudent.username = username;
             newStudent.emailAddress = emailAddress;
-
+            newStudent.middleName = middleName;
+            newStudent.suffix = suffix
             //DO SOME PASSWORD ENCRPYTION
             newStudent.passwordSalt = await bcrypt.genSalt()
             newStudent.password = await this.hashPassword(password, newStudent.passwordSalt)
@@ -56,7 +57,9 @@ export class StudentService {
     
         } catch (error) {
             
-            return responseBadRequest(error.detail);
+            console.log(error)
+            return responseBadRequest(error.detail || JSON.stringify(error) || 'Server Error');
+            
         }
     }
 
@@ -65,8 +68,9 @@ export class StudentService {
             const STUDENT_DATA = await this.studentPostRepository.findOne({ studentID: studentID});
 
             if(STUDENT_DATA){
-                
-                return responseOk(MESSAGES.STUDENT_SERVICE.SUCCESS_FETCHED, STUDENT_DATA);
+
+                const FILTERED_STUDENT_DATA = removePasswordField(STUDENT_DATA)
+                return responseOk(MESSAGES.STUDENT_SERVICE.SUCCESS_FETCHED, FILTERED_STUDENT_DATA);
 
             } else {
                 return responseNotFound(MESSAGES.STUDENT_SERVICE.NOT_FOUND)
@@ -74,8 +78,9 @@ export class StudentService {
             
         } catch (error) {
 
-            
-            return responseBadRequest(error.detail);
+            console.log(error)
+            return responseBadRequest(error.detail || JSON.stringify(error) || 'Server Error');
+
         }
     }
 
@@ -91,17 +96,20 @@ export class StudentService {
             });
 
             if(ALL_STUDENT_DATA){
+
+                const FILTERED_STUDENT_DATA = removePasswordField(ALL_STUDENT_DATA)
                 
-                return responseOk(MESSAGES.STUDENT_SERVICE.SUCCESS_FETCHED, ALL_STUDENT_DATA);
+                return responseOk(MESSAGES.STUDENT_SERVICE.SUCCESS_FETCHED, FILTERED_STUDENT_DATA);
 
             } else {
                 return responseNotFound(MESSAGES.STUDENT_SERVICE.NOT_FOUND)
             }
             
-        } catch (error) {
+        } catch (error) {   
 
-            
-            return responseBadRequest(error.detail);
+            console.log(error)
+            return responseBadRequest(error.detail || JSON.stringify(error) || 'Server Error');
+
         }
     }
 
@@ -115,7 +123,27 @@ export class StudentService {
     
         } catch (error) {
             
-            return responseBadRequest(error.detail);
+            console.log(error)
+            return responseBadRequest(error.detail || JSON.stringify(error) || 'Server Error');
+        }
+    }
+
+    async deleteStudent(id: number){
+        try {
+            
+            const DELETE_STUDENT_DATA = await this.studentPostRepository.delete({id: id});
+
+            if(DELETE_STUDENT_DATA && DELETE_STUDENT_DATA.affected !== 0){
+                
+                return responseOk(MESSAGES.STUDENT_SERVICE.DELETED, DELETE_STUDENT_DATA);
+
+            } else {
+                return responseNotFound(MESSAGES.STUDENT_SERVICE.NOT_FOUND)
+            }
+            
+        } catch (error) {
+            console.log(error)
+            return responseBadRequest(error.detail || JSON.stringify(error) || 'Server Error');
         }
     }
 

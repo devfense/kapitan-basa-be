@@ -47,3 +47,33 @@ export const responseBadRequest = (message: string): ResponseStatus => {
         message: message,
     }
 }
+
+export const removePasswordField = (data: any) => {
+
+    let usersData = data
+
+    if(usersData && usersData.constructor === Array){
+        usersData = usersData.map((record) => {
+                
+            //remove password
+            delete record.password
+            delete record.passwordSalt
+
+            return record
+        })
+
+        return usersData
+
+    } else if (usersData && usersData.id){
+
+        //remove password
+        delete usersData.password
+        delete usersData.passwordSalt
+        return usersData
+
+    } else {
+        console.log('Helpers: removePasswordField() - Invalid parameters passed')
+        return "ERROR PASSWORD FILTERING"
+    }
+
+}

@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger"
-import { IsString, MinLength, MaxLength, Matches, IsEmail, IsNotEmpty, IsNumber } from "class-validator"
+import { IsString, MaxLength, IsEmail, IsNotEmpty, IsNumber, IsOptional } from "class-validator"
 
 export class UpdateStudentDto {
 
@@ -23,12 +23,25 @@ export class UpdateStudentDto {
     @MaxLength(50)
     firstName: string
 
+    //MIDDLENAME
+    @ApiProperty({ maximum: 50 })
+    @IsOptional()
+    @MaxLength(50)
+    middleName: string
+
     //LASTNAME
     @ApiProperty({ maximum: 50 })
     @IsString()
     @IsNotEmpty()
     @MaxLength(50)
     lastName: string
+
+    //SUFFIX
+    @ApiProperty({ maximum: 5 })
+    @IsOptional()
+    @MaxLength(5)
+    suffix: string
+    
 
     //GRADE
     @ApiProperty({ maximum: 5 })
@@ -38,10 +51,10 @@ export class UpdateStudentDto {
     grade: string
 
     //SECTION
-    @ApiProperty({ maximum: 50 })
+    @ApiProperty({ maximum: 20 })
     @IsString()
     @IsNotEmpty()
-    @MaxLength(50)
+    @MaxLength(20)
     section: string
 
 

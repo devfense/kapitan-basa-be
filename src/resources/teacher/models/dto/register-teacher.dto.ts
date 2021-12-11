@@ -1,14 +1,8 @@
 import { ApiProperty } from "@nestjs/swagger"
-import { IsString, MinLength, MaxLength, Matches, IsEmail, IsNotEmpty } from "class-validator"
+import { IsString, MinLength, MaxLength, Matches, IsEmail, IsNotEmpty, IsOptional } from "class-validator"
 
-export class RegisterStudentDto {
+export class RegisterTeacherDto {
 
-    //STUDENT ID
-    @ApiProperty({ maximum: 15 })
-    @IsString()
-    @IsNotEmpty()
-    @MaxLength(15)
-    studentID: string
 
     //FIRSTNAME
     @ApiProperty({ maximum: 50 })
@@ -17,6 +11,12 @@ export class RegisterStudentDto {
     @MaxLength(50)
     firstName: string
 
+    //MIDDLENAME
+    @ApiProperty({ maximum: 50 })
+    @IsOptional()
+    @MaxLength(50)
+    middleName: string
+
     //LASTNAME
     @ApiProperty({ maximum: 50 })
     @IsString()
@@ -24,20 +24,12 @@ export class RegisterStudentDto {
     @MaxLength(50)
     lastName: string
 
-    //GRADE
+    //SUFFIX
     @ApiProperty({ maximum: 5 })
-    @IsString()
-    @IsNotEmpty()
+    @IsOptional()
     @MaxLength(5)
-    grade: string
-
-    //SECTION
-    @ApiProperty({ maximum: 50 })
-    @IsString()
-    @IsNotEmpty()
-    @MaxLength(50)
-    section: string
-
+    suffix: string
+    
 
     //USERNAME
     @ApiProperty({  maximum: 30 })

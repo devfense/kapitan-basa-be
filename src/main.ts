@@ -10,7 +10,7 @@ async function bootstrap() {
   
   const config = new DocumentBuilder()
     .setTitle('Kapitan Basa Backend API')
-    .setDescription('This is the backend api')
+    .setDescription('This is the backend api for kapitan basa')
     .setVersion('1.0')
     .addTag('kapitanbasa')
     .build();

@@ -12,13 +12,19 @@ export class StudentPostEntity {
     @Column({ name: 'first_name', nullable: false, type: 'varchar', length: 50 })
     firstName: string;
 
+    @Column({ name: 'middle_name', nullable: true, type: 'varchar', length: 50 })
+    middleName: string;
+
     @Column({ name: 'last_name', nullable: false, type: 'varchar', length: 50 })
     lastName: string;
+
+    @Column({ name: 'suffix', nullable: true, type: 'varchar', length: 5 })
+    suffix: string;
     
     @Column({ name: 'grade', nullable: false, type: 'varchar', length: 5 })
     grade: string;
 
-    @Column({ name: 'section', nullable: false, type: 'varchar', length: 5 })
+    @Column({ name: 'section', nullable: false, type: 'varchar', length: 20 })
     section: string;
 
     @Column({ name: 'username', nullable: false, type: 'varchar', length: 30, unique: true })
@@ -28,10 +34,10 @@ export class StudentPostEntity {
     emailAddress: string;
 
 
-    @Column({ name: 'password', nullable: false, type: 'varchar', select: false })
+    @Column({ name: 'password', nullable: false, type: 'varchar'})
     password: string;
 
-    @Column({ name: 'password_salt', nullable: false, type: 'varchar', select: false })
+    @Column({ name: 'password_salt', nullable: false, type: 'varchar'})
     passwordSalt: string;
 
 
@@ -46,8 +52,10 @@ export class StudentPostEntity {
 
     @Column({ name: 'last_updated_by', type: 'varchar', length: 30, default: 'BACKEND' })
     lastUpdatedBy: string;
+    
 
-    private async hashPassword(password: string, salt: string): Promise<string>{
-        return bcrypt.hash(password, salt)
+    async validatePassword(password: string): Promise<boolean> {
+        const hash = await bcrypt.hash(password, this.passwordSalt)
+        return hash === this.password
     }
 }
