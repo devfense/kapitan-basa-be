@@ -27,5 +27,15 @@ export const MESSAGES = {
 
         AUTH_INVALID_CREDENTIALS: 'Invalid username or password',
         AUTH_SUCCESS: 'User successfully authenticated'
+
+    },
+
+    ADMIN_SERVICE: {
+        CREATED: 'Admin successfully created',
+        DELETED: 'Admin successfully deleted',
+        UPDATED: 'Admin successfully updated',
+
+        SUCCESS_FETCHED: 'Admin data successfully fetched',
+        NOT_FOUND: 'Admin not found'
     }
 }

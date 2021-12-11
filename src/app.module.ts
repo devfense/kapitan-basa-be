@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { AdminModule } from './resources/admin/admin.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { StudentModule } from './resources/student/student.module';
@@ -21,13 +22,15 @@ import { UsersModule } from './resources/users/users.module';
        password: process.env.POSTGRES_PASSWORD,
        database: process.env.POSTGRES_DATABASE,
        autoLoadEntities: true,
-      //REMOVE THIS IN PRODUCTION REPLACE WITH MIGRATIONS
+       //REMOVE THIS IN PRODUCTION
        synchronize: true,
 
     }),
     StudentModule,
     TeacherModule,
-    UsersModule
+    UsersModule,
+    AdminModule
+
   ],
   controllers: [AppController],
   providers: [AppService],

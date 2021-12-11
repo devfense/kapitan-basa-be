@@ -11,13 +11,16 @@ import { TeacherEntity } from '../teacher/models/teacher.entity';
 import { StudentService } from '../student/services/student.service';
 import { StudentPostEntity } from '../student/models/student.entity';
 
+import { AdminService } from '../admin/services/admin.service';
+import { AdminPostEntity } from '../admin/models/admin.entity';
+
 
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([TeacherEntity, StudentPostEntity])
+    TypeOrmModule.forFeature([TeacherEntity, StudentPostEntity, AdminPostEntity])
   ],
-  providers: [TeacherService, StudentService, UsersService],
+  providers: [TeacherService, StudentService, UsersService, AdminService],
   controllers: [UsersController]
 })
 export class UsersModule {}

@@ -6,6 +6,9 @@ import { ProcessUserDto, LoginUserDto } from '../users.dto'
 import { TeacherEntity } from '../../teacher/models/teacher.entity';
 //STUDENT ENTITY
 import { StudentPostEntity } from '../../student/models/student.entity';
+//STUDENT ENTITY
+import { AdminPostEntity } from '../../admin/models/admin.entity';
+
 
 
 import * as bcrypt from 'bcrypt'
@@ -23,7 +26,11 @@ export class UsersService {
        private readonly teacherRepository: Repository<TeacherEntity>,
 
        @InjectRepository(StudentPostEntity)
-       private readonly studentRepository: Repository<StudentPostEntity>
+       private readonly studentRepository: Repository<StudentPostEntity>,
+
+       @InjectRepository(AdminPostEntity)
+       private readonly adminRepository: Repository<AdminPostEntity>
+
 
     ){}
 
@@ -128,6 +135,8 @@ export class UsersService {
 
             let STUDENT_AUTH = await this.studentRepository.findOne({ username })
             let TEACHER_AUTH = !STUDENT_AUTH ? await this.teacherRepository.findOne({ username }) : null
+            let ADMIN_AUTH = !TEACHER_AUTH && !STUDENT_AUTH ? await this.adminRepository.findOne({ username }) : null
+
             
 
             if (STUDENT_AUTH && await STUDENT_AUTH.validatePassword(password)) {
@@ -142,6 +151,13 @@ export class UsersService {
                 let FILTERED_TEACHER_DATA = removePasswordField(TEACHER_AUTH)
 
                 return responseOk(MESSAGES.USERS_SERVICE.AUTH_SUCCESS, FILTERED_TEACHER_DATA);
+
+
+            } else if (ADMIN_AUTH && await ADMIN_AUTH.validatePassword(password)) {
+
+                let FILTERED_ADMIN_DATA = removePasswordField(ADMIN_AUTH)
+
+                return responseOk(MESSAGES.USERS_SERVICE.AUTH_SUCCESS, FILTERED_ADMIN_DATA);
 
 
             } else {
