@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { AdminModule } from './admin/admin.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { StudentModule } from './student/student.module';
@@ -18,10 +19,11 @@ import { StudentModule } from './student/student.module';
        database: process.env.POSTGRES_DATABASE,
        autoLoadEntities: true,
       //  //REMOVE THIS IN PRODUCTION
-      //  synchronize: true,
+       synchronize: true,
 
     }),
-    StudentModule
+    StudentModule,
+    AdminModule
 
   ],
   controllers: [AppController],
