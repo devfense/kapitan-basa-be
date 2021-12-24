@@ -37,5 +37,14 @@ export const MESSAGES = {
 
         SUCCESS_FETCHED: 'Admin data successfully fetched',
         NOT_FOUND: 'Admin not found'
+    },
+
+    GAME_LEVEL_SERVICE: {
+        CREATED: 'Game Level Successfully Created',
+        DELETED: 'Game Level Successfully Deleted',
+        UPDATED: 'Game Level Successfully Saved',
+
+        SUCCESS_FETCHED: 'Game Level Successfully Fetched',
+        NOT_FOUND: 'Cannot find Game Level'
     }
 }
