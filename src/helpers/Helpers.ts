@@ -77,3 +77,47 @@ export const removePasswordField = (data: any) => {
     }
 
 }
+
+export const removeObjectKey = (removeList: [], dataObj: Object) => {
+
+    try {
+        let KEY_NOT_FOUND_COUNT = 0
+        let EXISTING_OBJ_KEYS = []
+
+        //EXTRACT ALL AVAILABLE KEYS
+        Object.keys(dataObj).map((key) => {
+            EXISTING_OBJ_KEYS = [...EXISTING_OBJ_KEYS, key]
+        })
+
+        //COUNT ALL NOT EXISTING KEYS ON THE OBJECT FOR CHECKING
+        removeList.forEach((keyToRemove) => {
+            KEY_NOT_FOUND_COUNT = !EXISTING_OBJ_KEYS.includes(keyToRemove) ? ++KEY_NOT_FOUND_COUNT : KEY_NOT_FOUND_COUNT
+        })
+
+        if(KEY_NOT_FOUND_COUNT == 0){
+
+            let FINAL_OBJ = dataObj
+
+            //REMOVE THE KEYS
+            removeList.forEach((keyToRemove) => {
+                delete FINAL_OBJ[keyToRemove]
+            })
+
+            return FINAL_OBJ
+
+        } else {
+            console.log('Helpers: removeObjectKey() - You are trying to remove a non existing object key')
+            return { messageError: "Helpers: removeObjectKey() - You are trying to remove a non existing object key", serverError: true }    
+        }
+
+        
+    } catch (error) {
+        console.log('Helpers: removeObjectKey() - A problem was encountered')
+        console.log(error)
+        return { messageError: "Helpers: removeObjectKey() - error removing key value", serverError: true }
+    }
+    
+
+    
+
+}

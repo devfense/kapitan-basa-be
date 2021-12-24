@@ -9,10 +9,6 @@ import { StudentPostEntity } from '../../student/models/student.entity';
 //STUDENT ENTITY
 import { AdminPostEntity } from '../../admin/models/admin.entity';
 
-
-
-import * as bcrypt from 'bcrypt'
-
 //Constants
 import { MESSAGES } from '../../../constants/messages'
 

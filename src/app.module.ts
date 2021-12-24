@@ -7,6 +7,8 @@ import { AppService } from './app.service';
 import { StudentModule } from './resources/student/student.module';
 import { TeacherModule } from './resources/teacher/teacher.module';
 import { UsersModule } from './resources/users/users.module';
+import { GameLevelsModule } from './resources/game-levels/game-levels.module';
+
 
 
 
@@ -29,7 +31,8 @@ import { UsersModule } from './resources/users/users.module';
     StudentModule,
     TeacherModule,
     UsersModule,
-    AdminModule
+    AdminModule,
+    GameLevelsModule
 
   ],
   controllers: [AppController],
