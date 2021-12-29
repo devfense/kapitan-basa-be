@@ -23,6 +23,16 @@ export class GameLevelsController {
     return this.gameLevelService.getSpecificGameLevel(parseInt(id))
   }
 
+  @Get('/get-story/:id')
+  async getStory(@Param('id') id: string){ 
+    return this.gameLevelService.getSpecificStory(parseInt(id))
+  }
+
+  @Get('/get-question/:id')
+  async getQuestion(@Param('id') id: string){ 
+    return this.gameLevelService.getSpecificQuestion(parseInt(id))
+  }
+
   @Put('update')
   async update(@Body(ValidationPipe) put: SaveGameLevelDto): Promise<ResponseStatus>{
     return this.gameLevelService.updateGameLevel(put)
