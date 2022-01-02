@@ -45,6 +45,14 @@ export const MESSAGES = {
         UPDATED: 'Game Level Successfully Saved',
 
         SUCCESS_FETCHED: 'Game Level Successfully Fetched',
-        NOT_FOUND: 'Cannot find Game Level'
+        NOT_FOUND: 'Cannot find Game Level',
+
+        SUCCESS_FETCHED_STORY: 'Story Successfully Fetched',
+        NOT_FOUND_STORY: 'Cannot find Story for this level',
+        
+        SUCCESS_FETCHED_QUESTION: 'Question Successfully Fetched',
+        NOT_FOUND_QUESTION: 'Cannot find Question for this story'
     }
+
+    
 }
