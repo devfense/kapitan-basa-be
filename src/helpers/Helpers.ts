@@ -48,6 +48,22 @@ export const responseBadRequest = (message: string): ResponseStatus => {
     }
 }
 
+export const responseForbidden = (message: string): ResponseStatus => {
+    return { 
+        success: false,
+        statusCode: STATUS_CODE.FORBIDDEN,
+        message: message,
+    }
+}
+
+export const responseServerError = (message: string): ResponseStatus => {
+    return { 
+        success: false,
+        statusCode: STATUS_CODE.SERVER_ERROR,
+        message: message,
+    }
+}
+
 export const removePasswordField = (data: any) => {
 
     let usersData = data
@@ -78,11 +94,13 @@ export const removePasswordField = (data: any) => {
 
 }
 
-export const removeObjectKey = (removeList: [], dataObj: Object) => {
+export const removeObjectKey = (removeList: Array<string>, dataObj: Object, subObj?: string) => {
 
     try {
         let KEY_NOT_FOUND_COUNT = 0
         let EXISTING_OBJ_KEYS = []
+
+        dataObj = subObj ? dataObj[subObj] : dataObj
 
         //EXTRACT ALL AVAILABLE KEYS
         Object.keys(dataObj).map((key) => {

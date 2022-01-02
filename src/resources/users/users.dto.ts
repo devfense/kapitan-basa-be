@@ -13,7 +13,7 @@ export class ProcessUserDto {
     //ACTION
     @ApiProperty()
     @IsString()
-    @IsIn(['APPROVED', 'REJECT'])
+    @IsIn(['APPROVED', 'REJECTED'])
     @IsNotEmpty()
     action: string
 

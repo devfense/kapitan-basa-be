@@ -15,10 +15,29 @@ import { AdminService } from '../admin/services/admin.service';
 import { AdminPostEntity } from '../admin/models/admin.entity';
 
 
+//GAME LEVELS
+import { StoryEntity } from '../game-levels/models/stories.entity';
+import { QuestionEntity } from '../game-levels/models/questions.entity';
+import { ChoicesEntity } from '../game-levels/models/choices.entity';
+
+import { StudentLevelsEntity } from '../game-levels/models/student-levels.entity';
+import { StudentAnswerEntity } from '../game-levels/models/student_answers.entity';
+import { GameLevelsEntity } from '../game-levels/models/game-levels.entity';
+
+
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([TeacherEntity, StudentPostEntity, AdminPostEntity])
+    TypeOrmModule.forFeature([
+      TeacherEntity, 
+      StudentPostEntity, 
+      AdminPostEntity, 
+      StudentLevelsEntity, 
+      GameLevelsEntity, 
+      StudentAnswerEntity, 
+      QuestionEntity, 
+      ChoicesEntity, 
+      StoryEntity])
   ],
   providers: [TeacherService, StudentService, UsersService, AdminService],
   controllers: [UsersController]

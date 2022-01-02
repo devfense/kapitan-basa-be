@@ -95,7 +95,7 @@ export class StudentService {
                 take: limit ? parseInt(limit) : 0,
             });
 
-            if(ALL_STUDENT_DATA){
+            if(ALL_STUDENT_DATA.length > 0){
 
                 const FILTERED_STUDENT_DATA = removePasswordField(ALL_STUDENT_DATA)
                 

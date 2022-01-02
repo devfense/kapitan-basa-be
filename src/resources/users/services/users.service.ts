@@ -6,18 +6,25 @@ import { ProcessUserDto, LoginUserDto } from '../users.dto'
 import { TeacherEntity } from '../../teacher/models/teacher.entity';
 //STUDENT ENTITY
 import { StudentPostEntity } from '../../student/models/student.entity';
-//STUDENT ENTITY
+//ADMIN ENTITY
 import { AdminPostEntity } from '../../admin/models/admin.entity';
+//STUDENT LEVELS ENTITY
+import { StudentLevelsEntity } from '../../game-levels/models/student-levels.entity';
+//GAME LEVELS ENTITY
+import { GameLevelsEntity } from '../../game-levels/models/game-levels.entity';
+
+
 
 //Constants
 import { MESSAGES } from '../../../constants/messages'
 
 //Helpers
-import { responseOk, responseCreatedUpdated, responseNotFound, responseBadRequest, removePasswordField } from '../../../helpers/Helpers'
+import { responseOk, responseCreatedUpdated, responseNotFound, responseBadRequest, removePasswordField, responseForbidden, responseServerError } from '../../../helpers/Helpers'
 
 @Injectable()
 export class UsersService {
     constructor(
+
        @InjectRepository(TeacherEntity)
        private readonly teacherRepository: Repository<TeacherEntity>,
 
@@ -25,7 +32,13 @@ export class UsersService {
        private readonly studentRepository: Repository<StudentPostEntity>,
 
        @InjectRepository(AdminPostEntity)
-       private readonly adminRepository: Repository<AdminPostEntity>
+       private readonly adminRepository: Repository<AdminPostEntity>,
+
+       @InjectRepository(StudentLevelsEntity)
+       private readonly studentLevelsRepository: Repository<StudentLevelsEntity>,
+
+       @InjectRepository(GameLevelsEntity)
+       private readonly gameLevelsRepository: Repository<GameLevelsEntity>
 
 
     ){}
@@ -95,13 +108,73 @@ export class UsersService {
 
             if(STUDENT_TO_PROCESS){
 
-                STUDENT_TO_PROCESS.status = action
+                switch (action) {
+                    case 'APPROVED':
+                        STUDENT_TO_PROCESS.status = 'ACTIVE'
+                        //GENERATE STUDENT LEVELS IF THERE ARE NO EXISITING LEVELS YET OTHERWISE PROCESS TO UPDATING THE STATUS
+                        if((await this.studentLevelsRepository.find({ studentID: STUDENT_TO_PROCESS.studentID })).length == 0){
 
-                if(await this.studentRepository.save(STUDENT_TO_PROCESS)){
+                            const ALL_GAME_LEVELS_DATA = await this.gameLevelsRepository.find({
+                                order: {
+                                    id: "ASC",
+                                },
+                                skip: 0,
+                                take: 0,
+                            });
 
-                    return responseCreatedUpdated(( action === 'APPROVED' ? MESSAGES.USERS_SERVICE.PROCESS_APPROVE : MESSAGES.USERS_SERVICE.PROCESS_REJECT), undefined, true)
-                
-                } 
+                            //CHECK IF THERE ARE GAME LEVEL BEFORE GENERATING
+                            if(ALL_GAME_LEVELS_DATA.length > 0){
+
+                                
+
+                                //GENERATE STUDENT GAME LEVEL
+                                ALL_GAME_LEVELS_DATA.forEach(async(levelData) => {
+                                    let newStudentGameLevel = new StudentLevelsEntity()
+
+                                    newStudentGameLevel.studentID = STUDENT_TO_PROCESS.studentID
+                                    newStudentGameLevel.gameLevelId = levelData.id
+
+                                    await this.studentLevelsRepository.save(newStudentGameLevel)
+                                        
+                                })
+
+
+                                
+                                //FINAL RETURN
+                                if(await this.studentRepository.save(STUDENT_TO_PROCESS)){
+
+                                    return responseCreatedUpdated(MESSAGES.USERS_SERVICE.PROCESS_APPROVE, undefined, true)
+                            
+                                }
+
+                            } else {
+
+                                return responseServerError(MESSAGES.USERS_SERVICE.GENERATE_LEVEL_EMPTY_LEVEL)
+
+                            }
+                        
+                        } else {
+                            if(await this.studentRepository.save(STUDENT_TO_PROCESS)){
+
+                                return responseCreatedUpdated(MESSAGES.USERS_SERVICE.PROCESS_APPROVE, undefined, true)
+                        
+                            }
+                        }
+                        
+                        break;
+                    case 'REJECTED':
+                        STUDENT_TO_PROCESS.status = 'REJECTED'
+                        if(await this.studentRepository.save(STUDENT_TO_PROCESS)){
+
+                            return responseCreatedUpdated(MESSAGES.USERS_SERVICE.PROCESS_REJECT, undefined, true)
+                        
+                        }
+                        break;
+                }
+
+
+
+ 
 
             } else if(TEACHER_TO_PROCESS) {
 
@@ -137,22 +210,54 @@ export class UsersService {
 
             if (STUDENT_AUTH && await STUDENT_AUTH.validatePassword(password)) {
 
-                
-                let FILTERED_STUDENT_DATA = removePasswordField(STUDENT_AUTH)
+                if(STUDENT_AUTH.status === 'PENDING'){
 
-                return responseOk(MESSAGES.USERS_SERVICE.AUTH_SUCCESS, FILTERED_STUDENT_DATA);
+                    return responseForbidden(MESSAGES.USERS_SERVICE.PENDING_ACCOUNT_STATUS);
+
+                } else if (STUDENT_AUTH.status === 'REJECTED'){
+
+                    return responseForbidden(MESSAGES.USERS_SERVICE.REJECTED_ACCOUNT_STATUS);
+
+                } else {
+
+                    //CHECK FOR NEW GAME LEVELS
+                    let STUDENT_LEVELS = await this.studentLevelsRepository.find({ studentID: STUDENT_AUTH.studentID })
+                    let ALL_GAME_LEVELS = await this.gameLevelsRepository.find()
+
+                    if(STUDENT_LEVELS.length !== ALL_GAME_LEVELS.length){
+                        ALL_GAME_LEVELS.forEach(async(gameLevel) => {
+                           //ADD NEW GAME LEVEL TO STUDENT IF THERE IS A NEW ONE
+                           if(!STUDENT_LEVELS.find((studLevel) => studLevel.gameLevelId === gameLevel.id)){
+                                let newStudentGameLevel = new StudentLevelsEntity()
+
+                                newStudentGameLevel.studentID = STUDENT_AUTH.studentID
+                                newStudentGameLevel.gameLevelId = gameLevel.id
+
+                                await this.studentLevelsRepository.save(newStudentGameLevel)
+
+                           }
+                        })
+                    } 
+
+
+
+                    let FILTERED_STUDENT_DATA = removePasswordField(STUDENT_AUTH)
+                    FILTERED_STUDENT_DATA['accountType'] = "STUDENT"
+                    return responseOk(MESSAGES.USERS_SERVICE.AUTH_SUCCESS, FILTERED_STUDENT_DATA);
+
+                }
 
             } else if (TEACHER_AUTH && await TEACHER_AUTH.validatePassword(password)) {
 
                 let FILTERED_TEACHER_DATA = removePasswordField(TEACHER_AUTH)
-
+                FILTERED_TEACHER_DATA['accountType'] = "TEACHER"
                 return responseOk(MESSAGES.USERS_SERVICE.AUTH_SUCCESS, FILTERED_TEACHER_DATA);
 
 
             } else if (ADMIN_AUTH && await ADMIN_AUTH.validatePassword(password)) {
 
                 let FILTERED_ADMIN_DATA = removePasswordField(ADMIN_AUTH)
-
+                FILTERED_ADMIN_DATA['accountType'] = "ADMIN"
                 return responseOk(MESSAGES.USERS_SERVICE.AUTH_SUCCESS, FILTERED_ADMIN_DATA);
 
 

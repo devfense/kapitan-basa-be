@@ -32,4 +32,10 @@ export class GameLevelsController {
   async delete(@Param('id') id: number): Promise<ResponseStatus>{
     return this.gameLevelService.deleteGameLevel(id)
   }
+
+  //STUDENT GAME LEVELS
+  @Get('student-levels/:studentID')
+  async getStudentLevels(@Param('studentID') studentID: string): Promise<ResponseStatus>{
+    return this.gameLevelService.getStudentGameLevels(studentID)
+  }
 }
