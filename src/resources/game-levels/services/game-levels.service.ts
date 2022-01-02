@@ -52,7 +52,18 @@ export class GameLevelsService {
                 .where('gameLevel.id = :gameLevelId', { gameLevelId: id })
                 .getOne();
             if (QUESTION_DATA) { 
-                return responseOk(MESSAGES.GAME_LEVEL_SERVICE.SUCCESS_FETCHED_QUESTION, QUESTION_DATA);
+
+                //REMOVE THE ANSWER FIELD IN RETURN
+                let FILTERED_QUESTIONS = QUESTION_DATA.stories.map((story) => {
+
+                    let QUESTIONS = story.questions.map((question) => {
+                        return removeObjectKey(['questionCorrectAnswerLetter'], question)
+                    })
+
+                    return { ...story, ['questions']: QUESTIONS }
+                })
+
+                return responseOk(MESSAGES.GAME_LEVEL_SERVICE.SUCCESS_FETCHED_QUESTION, FILTERED_QUESTIONS);
 
             } else { 
                 return responseNotFound(MESSAGES.GAME_LEVEL_SERVICE.NOT_FOUND_QUESTION)
