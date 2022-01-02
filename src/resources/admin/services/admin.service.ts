@@ -95,7 +95,7 @@ export class AdminService {
                 take: limit ? parseInt(limit) : 0,
             });
 
-            if(ALL_ADMIN_DATA){
+            if(ALL_ADMIN_DATA.length > 0){
 
                 const FILTERED_ADMIN_DATA = removePasswordField(ALL_ADMIN_DATA)
 

@@ -26,7 +26,13 @@ export const MESSAGES = {
         NOT_FOUND: 'Users not found',
 
         AUTH_INVALID_CREDENTIALS: 'Invalid username or password',
-        AUTH_SUCCESS: 'User successfully authenticated'
+        AUTH_SUCCESS: 'User successfully authenticated',
+
+        PENDING_ACCOUNT_STATUS: 'Your account is still in pending status. Kindly wait for the admin to approve your registration',
+        REJECTED_ACCOUNT_STATUS: 'Sorry it seems like your registration has been rejected by the admin',
+
+        GENERATE_LEVEL_EMPTY_LEVEL: 'It seems that there are no game levels to generate for the student'
+
 
     },
 
@@ -47,6 +53,8 @@ export const MESSAGES = {
         SUCCESS_FETCHED: 'Game Level Successfully Fetched',
         NOT_FOUND: 'Cannot find Game Level',
 
+        STUDENT_GAME_LEVEL_SUCCESS_FETCHED: 'Student game levels successfully fetched',
+        STUDENT_GAME_LEVEL_NOT_FOUND: 'Cannot find the student game levels',
         SUCCESS_FETCHED_STORY: 'Story Successfully Fetched',
         NOT_FOUND_STORY: 'Cannot find Story for this level',
         

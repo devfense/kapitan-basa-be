@@ -7,11 +7,20 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { StoryEntity } from './models/stories.entity';
 import { QuestionEntity } from './models/questions.entity';
 import { ChoicesEntity } from './models/choices.entity';
+import { StudentLevelsEntity } from './models/student-levels.entity';
+import { StudentAnswerEntity } from './models/student_answers.entity';
 
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([GameLevelsEntity, QuestionEntity, ChoicesEntity, StoryEntity])
+    TypeOrmModule.forFeature([
+      GameLevelsEntity, 
+      QuestionEntity, 
+      ChoicesEntity, 
+      StoryEntity, 
+      StudentLevelsEntity, 
+      StudentAnswerEntity
+    ])
   ],
   providers: [GameLevelsService],
   controllers: [GameLevelsController]
