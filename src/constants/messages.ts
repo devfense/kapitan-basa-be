@@ -55,5 +55,12 @@ export const MESSAGES = {
 
         STUDENT_GAME_LEVEL_SUCCESS_FETCHED: 'Student game levels successfully fetched',
         STUDENT_GAME_LEVEL_NOT_FOUND: 'Cannot find the student game levels',
+        SUCCESS_FETCHED_STORY: 'Story Successfully Fetched',
+        NOT_FOUND_STORY: 'Cannot find Story for this level',
+        
+        SUCCESS_FETCHED_QUESTION: 'Question Successfully Fetched',
+        NOT_FOUND_QUESTION: 'Cannot find Question for this story'
     }
+
+    
 }

@@ -39,6 +39,60 @@ export class GameLevelsService {
             
         }
     }
+    
+    async getSpecificQuestion(id: number) {
+
+        try {
+            let QUESTION_DATA = await this.gameLevelRepository
+                .createQueryBuilder('gameLevel')
+                .select(['gameLevel.id', 'stories.id', 'questions.id', 'questions.questionContent'])
+                .leftJoin('gameLevel.stories', 'stories') 
+                .leftJoinAndSelect('stories.questions', 'questions')
+                .leftJoinAndSelect('questions.choices','choices')
+                .where('gameLevel.id = :gameLevelId', { gameLevelId: id })
+                .getOne();
+            if (QUESTION_DATA) { 
+                return responseOk(MESSAGES.GAME_LEVEL_SERVICE.SUCCESS_FETCHED_QUESTION, QUESTION_DATA);
+
+            } else { 
+                return responseNotFound(MESSAGES.GAME_LEVEL_SERVICE.NOT_FOUND_QUESTION)
+            }
+            
+        } catch (error) {
+
+            console.log(error)
+            return responseBadRequest(error.detail || JSON.stringify(error) || 'Server Error');
+            
+        }
+
+    }
+
+    async getSpecificStory(id: number) {       
+        try {
+            let STORY_DATA = await this.gameLevelRepository
+                //USING QUERYBUILDEDR FOR DYNAMIC QUERYING
+                .createQueryBuilder('gameLevel')
+                .select(['gameLevel.id','stories'])
+                .leftJoinAndSelect('gameLevel.stories', 'stories')
+                .where('gameLevel.id = :gameLevelId', { gameLevelId: id })
+                .getOne();
+
+            if (STORY_DATA) {
+                
+                return responseOk(MESSAGES.GAME_LEVEL_SERVICE.SUCCESS_FETCHED_STORY, STORY_DATA);
+                
+            } else { 
+                return responseNotFound(MESSAGES.GAME_LEVEL_SERVICE.NOT_FOUND_STORY)
+            }
+            
+        } catch (error) {
+            console.log(error)
+            return responseBadRequest(error.detail || JSON.stringify(error) || 'Server Error');
+            
+        }
+
+        
+    }
 
     async getSpecificGameLevel(id: number){
         try {
