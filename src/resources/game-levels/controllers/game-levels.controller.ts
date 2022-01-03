@@ -1,4 +1,6 @@
 import { SaveGameLevelDto } from '../models/dto/save-game-levels.dto';
+import { SubmitQuizAnswerDto } from '../models/dto/submit-quiz-answer.dto';
+
 import { ResponseStatus } from '../../../global-interfaces/response-status.interface'
 import { Body, Controller, Post, ValidationPipe, Param, Get, Query, Put, Delete } from '@nestjs/common';
 import { GameLevelsService } from '../services/game-levels.service';
@@ -47,5 +49,11 @@ export class GameLevelsController {
   @Get('student-levels/:studentID')
   async getStudentLevels(@Param('studentID') studentID: string): Promise<ResponseStatus>{
     return this.gameLevelService.getStudentGameLevels(studentID)
+  }
+
+  //SUBMIT ANSWER
+  @Post('submit-quiz-answer')
+  async submitQuizAnswer(@Body(ValidationPipe) post: SubmitQuizAnswerDto): Promise<ResponseStatus>{
+    return this.gameLevelService.processQuizAnswer(post)
   }
 }

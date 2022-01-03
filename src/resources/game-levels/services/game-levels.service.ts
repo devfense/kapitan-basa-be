@@ -3,13 +3,16 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { GameLevelsEntity } from '../models/game-levels.entity';
 import { StudentLevelsEntity } from '../models/student-levels.entity';
+import { StudentAnswerEntity } from '../models/student_answers.entity';
+
 import { SaveGameLevelDto } from '../models/dto/save-game-levels.dto';
+import { SubmitQuizAnswerDto } from '../models/dto/submit-quiz-answer.dto';
 
 //Constants
 import { MESSAGES } from '../../../constants/messages'
 
 //Helpers
-import { responseOk, responseCreatedUpdated, responseNotFound, responseBadRequest, removePasswordField, removeObjectKey } from '../../../helpers/Helpers'
+import { responseOk, responseCreatedUpdated, responseNotFound, responseBadRequest, removeObjectKey } from '../../../helpers/Helpers'
 
 @Injectable()
 export class GameLevelsService {
@@ -218,6 +221,79 @@ export class GameLevelsService {
         } catch (error) {
             console.log(error)
             return responseBadRequest(error.detail || JSON.stringify(error) || 'Server Error');
+        }
+    }
+
+    async processQuizAnswer(quizAnswerData: SubmitQuizAnswerDto){
+        try {
+            
+            const { studentID, gameLevelID, answers } = quizAnswerData
+
+            let STUDENT_GAME_LEVEL_DATA = await this.studentLevelEntity.findOne({
+                where: { studentID: studentID, gameLevelId: gameLevelID }
+            });
+
+            //CHECK IF THE GAME LEVEL IS NOT YET CLEARED
+            if(STUDENT_GAME_LEVEL_DATA && !STUDENT_GAME_LEVEL_DATA.levelCleared){
+
+                const QUESTIONS = STUDENT_GAME_LEVEL_DATA.gameLevelData.stories[0].questions
+
+                let quizScore = 0
+    
+                answers.map((data) => {
+                    const GET_QUESTION = QUESTIONS.find((question) => question.id === data.questionID)
+                    quizScore = GET_QUESTION.questionCorrectAnswerLetter === data.answerLetter ? ++quizScore : quizScore
+                })
+
+                if(quizScore >= (QUESTIONS.length * 0.6)){
+
+                    STUDENT_GAME_LEVEL_DATA.levelScore = quizScore
+                    STUDENT_GAME_LEVEL_DATA.levelCleared = true
+                    STUDENT_GAME_LEVEL_DATA.levelScoreSummary = `${quizScore}/${QUESTIONS.length}`
+                    STUDENT_GAME_LEVEL_DATA.levelRemarks = "PASSED"
+                    STUDENT_GAME_LEVEL_DATA.studentAnswers = answers.map((answer) => {
+
+                        let newAnswer = new StudentAnswerEntity()
+                        newAnswer.storyID = answer.storyID
+                        newAnswer.questionID = answer.questionID
+                        newAnswer.answerLetter = answer.answerLetter
+
+                        return newAnswer
+
+                    })
+
+ 
+                    if(await this.studentLevelEntity.save(STUDENT_GAME_LEVEL_DATA)){
+                        const FILTERED_RECORD = removeObjectKey(['gameLevelData', 'createdAt', 'lastUpdatedBy', 'studentAnswers'], STUDENT_GAME_LEVEL_DATA)
+                        return responseOk(MESSAGES.GAME_LEVEL_SERVICE.SUCCESS_PROCESS_SUBMIT_QUIZ_ANSWER, FILTERED_RECORD)    
+                    }
+
+
+                } else {
+
+                    STUDENT_GAME_LEVEL_DATA.levelScore = quizScore
+                    STUDENT_GAME_LEVEL_DATA.levelScoreSummary = `${quizScore}/${QUESTIONS.length}`
+                    STUDENT_GAME_LEVEL_DATA.levelRemarks = "FAILED"
+
+                    if(await this.studentLevelEntity.save(STUDENT_GAME_LEVEL_DATA)){
+                        const FILTERED_RECORD = removeObjectKey(['gameLevelData', 'createdAt', 'lastUpdatedBy', 'studentAnswers'], STUDENT_GAME_LEVEL_DATA)
+                        return responseOk(MESSAGES.GAME_LEVEL_SERVICE.SUCCESS_PROCESS_SUBMIT_QUIZ_ANSWER, FILTERED_RECORD)    
+                    }
+
+                }
+            } else {
+                return responseBadRequest(MESSAGES.GAME_LEVEL_SERVICE.BAD_REQUEST_SUBMIT_QUIZ_ANSWER)
+            }
+
+
+
+
+            
+        } catch (error) {
+
+            console.log(error)
+            return responseBadRequest(error.detail || JSON.stringify(error) || 'Server Error');
+
         }
     }
 
