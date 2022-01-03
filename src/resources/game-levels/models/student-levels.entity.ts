@@ -32,6 +32,9 @@ export class StudentLevelsEntity {
     @Column({ name: 'level_score_summary', nullable: true, type: 'varchar', length: 7 })
     levelScoreSummary: string;
 
+    @Column({ name: 'level_remarks', nullable: true, type: 'varchar', length: 15 })
+    levelRemarks: string;
+
     @Column({ name: 'level_cleared', type: 'boolean', default: false })
     levelCleared: Boolean;
 

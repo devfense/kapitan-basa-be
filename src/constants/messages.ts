@@ -59,7 +59,11 @@ export const MESSAGES = {
         NOT_FOUND_STORY: 'Cannot find Story for this level',
         
         SUCCESS_FETCHED_QUESTION: 'Question Successfully Fetched',
-        NOT_FOUND_QUESTION: 'Cannot find Question for this story'
+        NOT_FOUND_QUESTION: 'Cannot find Question for this story',
+
+        BAD_REQUEST_SUBMIT_QUIZ_ANSWER: 'Cannot find the student game level to update or the game level is already cleared',
+
+        SUCCESS_PROCESS_SUBMIT_QUIZ_ANSWER: 'Quiz answers successfully processed'
     }
 
     
