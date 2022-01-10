@@ -18,6 +18,7 @@ import { GameLevelsModule } from './resources/game-levels/game-levels.module';
     TypeOrmModule.forRoot({ 
        type: 'postgres',
        //url: process.env.DATABASE_URL,    //HEROKU POSTGRESS
+       //ssl: { require: true, rejectUnauthorized: false },
        host: process.env.POSTGRES_HOST,
        port: parseInt(<string>process.env.POSTGRES_PORT),
        username: process.env.POSTGRES_USER,

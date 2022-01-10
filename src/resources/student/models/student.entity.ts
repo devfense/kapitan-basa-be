@@ -33,13 +33,11 @@ export class StudentPostEntity {
     @Column({ name: 'email_address', nullable: false, type: 'varchar', length: 50, unique: true })
     emailAddress: string;
 
-
     @Column({ name: 'password', nullable: false, type: 'varchar'})
     password: string;
 
     @Column({ name: 'password_salt', nullable: false, type: 'varchar'})
     passwordSalt: string;
-
 
     @Column({ name: 'status', type: 'varchar', length: 10, default: 'PENDING' })
     status: string;
