@@ -11,7 +11,7 @@ import * as bcrypt from 'bcrypt'
 import { MESSAGES } from '../../../constants/messages'
 
 //Helpers
-import { responseOk, responseCreatedUpdated, responseNotFound, responseBadRequest, removePasswordField } from '../../../helpers/Helpers'
+import { responseOk, responseCreatedUpdated, responseNotFound, responseBadRequest, removePasswordField, pagination } from '../../../helpers/Helpers'
 
 @Injectable()
 export class StudentService {
@@ -84,15 +84,15 @@ export class StudentService {
         }
     }
 
-    async getAllStudent(limit: string){
+    async getAllStudent(limit: string, page: string){
         try {
             
             const ALL_STUDENT_DATA = await this.studentPostRepository.find({
                 order: {
                     updatedAt: "DESC",
                 },
-                skip: 0,
                 take: limit ? parseInt(limit) : 0,
+                skip: pagination(limit, page),
             });
 
             if(ALL_STUDENT_DATA.length > 0){

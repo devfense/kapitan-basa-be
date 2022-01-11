@@ -46,9 +46,9 @@ export class GameLevelsController {
   }
 
   //STUDENT GAME LEVELS
-  @Get('student-levels/:studentID')
-  async getStudentLevels(@Param('studentID') studentID: string): Promise<ResponseStatus>{
-    return this.gameLevelService.getStudentGameLevels(studentID)
+  @Get('student-levels/:studentID?')
+  async getStudentLevels(@Param('studentID') studentID: string, @Query('limit') limit: string, @Query('page') page: string): Promise<ResponseStatus>{
+    return this.gameLevelService.getStudentGameLevels(studentID, limit, page)
   }
 
   //SUBMIT ANSWER

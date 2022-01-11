@@ -10,8 +10,8 @@ export class StudentController {
   constructor(private studentService: StudentService){}
 
   @Get('/get-all?')
-  async getAll(@Query('limit') limit: string): Promise<ResponseStatus>{
-    return this.studentService.getAllStudent(limit)
+  async getAll(@Query('limit') limit: string, @Query('page') page: string): Promise<ResponseStatus>{
+    return this.studentService.getAllStudent(limit, page)
   }
 
   @Post('register')
