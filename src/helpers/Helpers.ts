@@ -139,3 +139,13 @@ export const removeObjectKey = (removeList: Array<string>, dataObj: Object, subO
     
 
 }
+
+export const pagination = (limit: string, page: string) => {
+    return parseInt(limit) !== 0 ? parseInt(limit) !== 1 ? parseInt(page) !== 0 ? parseInt(page) === 1 ? 0
+    : (parseInt(limit) * parseInt(page) - (parseInt(page) - 1)) - 1 
+    : parseInt(limit) + 1 
+    : parseInt(page) !== 0 ? parseInt(page) - 1 : parseInt(limit) + 1 
+    : 0
+
+    
+}

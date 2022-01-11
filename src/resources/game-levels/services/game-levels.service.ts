@@ -12,7 +12,7 @@ import { SubmitQuizAnswerDto } from '../models/dto/submit-quiz-answer.dto';
 import { MESSAGES } from '../../../constants/messages'
 
 //Helpers
-import { responseOk, responseCreatedUpdated, responseNotFound, responseBadRequest, removeObjectKey } from '../../../helpers/Helpers'
+import { responseOk, responseCreatedUpdated, responseNotFound, responseBadRequest, removeObjectKey, pagination } from '../../../helpers/Helpers'
 
 @Injectable()
 export class GameLevelsService {
@@ -128,16 +128,17 @@ export class GameLevelsService {
         }
     }
 
-    async getStudentGameLevels(studentID: string){
+    async getStudentGameLevels(studentID: string, limit: string, page: string){
         try {
             const STUDENT_GAME_LEVEL_DATA = await this.studentLevelEntity.find({
                 where: { studentID: studentID },
                 order: {
                     gameLevelId: "ASC",
                 },
-                skip: 0,
-                take: 0,
+                take: limit ? parseInt(limit) : 0,
+                skip: pagination(limit, page),
             });
+
 
             if(STUDENT_GAME_LEVEL_DATA.length > 0){
 
@@ -145,7 +146,7 @@ export class GameLevelsService {
 
                     const FILTERED_LEVEL_DATA = removeObjectKey(['stories', 'createdAt', 'updatedAt', 'lastUpdatedBy'], data.gameLevelData)
                     delete data.gameLevelData
-                    return {...removeObjectKey(['createdAt', 'updatedAt', 'lastUpdatedBy'], data), ['gameLevelData']: FILTERED_LEVEL_DATA}
+                    return {...removeObjectKey(['createdAt', 'updatedAt', 'lastUpdatedBy', 'studentAnswers'], data), ['gameLevelData']: FILTERED_LEVEL_DATA}
                 })
 
                 return responseOk(MESSAGES.GAME_LEVEL_SERVICE.STUDENT_GAME_LEVEL_SUCCESS_FETCHED, FILTERED_STUDENT_GAME_LEVEL_DATA);
