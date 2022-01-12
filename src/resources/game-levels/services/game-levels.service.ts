@@ -139,6 +139,8 @@ export class GameLevelsService {
                 skip: pagination(limit, page),
             });
 
+            const UNLOCKED_GAME_LEVEL = this.getNextLevelToUnlock(STUDENT_GAME_LEVEL_DATA)
+
 
             if(STUDENT_GAME_LEVEL_DATA.length > 0){
 
@@ -146,7 +148,7 @@ export class GameLevelsService {
 
                     const FILTERED_LEVEL_DATA = removeObjectKey(['stories', 'createdAt', 'updatedAt', 'lastUpdatedBy'], data.gameLevelData)
                     delete data.gameLevelData
-                    return {...removeObjectKey(['createdAt', 'updatedAt', 'lastUpdatedBy', 'studentAnswers'], data), ['gameLevelData']: FILTERED_LEVEL_DATA}
+                    return {...removeObjectKey(['createdAt', 'updatedAt', 'lastUpdatedBy', 'studentAnswers'], data), ['locked']: data.gameLevelId === UNLOCKED_GAME_LEVEL ? false : true, ['gameLevelData']: FILTERED_LEVEL_DATA, }
                 })
 
                 return responseOk(MESSAGES.GAME_LEVEL_SERVICE.STUDENT_GAME_LEVEL_SUCCESS_FETCHED, FILTERED_STUDENT_GAME_LEVEL_DATA);
@@ -296,6 +298,21 @@ export class GameLevelsService {
             return responseBadRequest(error.detail || JSON.stringify(error) || 'Server Error');
 
         }
+    }
+
+    private getNextLevelToUnlock(studGameLevels: StudentLevelsEntity[]): number {
+
+       let highestClearedLevel = 0
+
+       studGameLevels.forEach((level) => {
+           if(level.levelCleared){
+               highestClearedLevel = level.gameLevelId > highestClearedLevel ? level.gameLevelId : highestClearedLevel
+           }
+       })
+       
+
+
+       return studGameLevels[(studGameLevels.findIndex((level) => level.gameLevelId === highestClearedLevel) + 1)].gameLevelId
     }
 
 }
