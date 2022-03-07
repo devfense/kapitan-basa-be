@@ -14,6 +14,10 @@ import { MESSAGES } from '../../../constants/messages'
 //Helpers
 import { responseOk, responseCreatedUpdated, responseNotFound, responseBadRequest, removeObjectKey, pagination } from '../../../helpers/Helpers'
 
+//interfaces
+import { PaginationData } from '../../../global-interfaces/response-status.interface'
+
+
 @Injectable()
 export class GameLevelsService {
     constructor(
@@ -139,6 +143,10 @@ export class GameLevelsService {
                 skip: pagination(limit, page),
             });
 
+            const STUDENT_GAME_LEVEL_DATA_ALL = await this.studentLevelEntity.find({studentID: studentID });
+
+
+
             const UNLOCKED_GAME_LEVEL = this.getNextLevelToUnlock(STUDENT_GAME_LEVEL_DATA)
 
 
@@ -148,10 +156,20 @@ export class GameLevelsService {
 
                     const FILTERED_LEVEL_DATA = removeObjectKey(['stories', 'createdAt', 'updatedAt', 'lastUpdatedBy'], data.gameLevelData)
                     delete data.gameLevelData
-                    return {...removeObjectKey(['createdAt', 'updatedAt', 'lastUpdatedBy', 'studentAnswers'], data), ['locked']: data.gameLevelId === UNLOCKED_GAME_LEVEL ? false : true, ['gameLevelData']: FILTERED_LEVEL_DATA, }
+                    return {
+                        ...removeObjectKey(['createdAt', 'lastUpdatedBy', 'studentAnswers'], data), 
+                        ['locked']: data.gameLevelId === UNLOCKED_GAME_LEVEL ? false : true, 
+                        ['gameLevelData']: FILTERED_LEVEL_DATA, 
+                        }
                 })
 
-                return responseOk(MESSAGES.GAME_LEVEL_SERVICE.STUDENT_GAME_LEVEL_SUCCESS_FETCHED, FILTERED_STUDENT_GAME_LEVEL_DATA);
+                let paginationData: PaginationData = {
+                    overallTotal: STUDENT_GAME_LEVEL_DATA_ALL.length,
+                    page: parseInt(page),
+                    limit: parseInt(limit),
+                }
+
+                return responseOk(MESSAGES.GAME_LEVEL_SERVICE.STUDENT_GAME_LEVEL_SUCCESS_FETCHED, FILTERED_STUDENT_GAME_LEVEL_DATA, paginationData);
 
             } else {
                 return responseNotFound(MESSAGES.GAME_LEVEL_SERVICE.STUDENT_GAME_LEVEL_NOT_FOUND)

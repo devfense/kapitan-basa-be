@@ -1,5 +1,5 @@
 import { STATUS_CODE } from '../constants/status-code'
-import { ResponseStatus } from '../global-interfaces/response-status.interface'
+import { ResponseStatus, PaginationData } from '../global-interfaces/response-status.interface'
 
 
 /**
@@ -10,14 +10,15 @@ import { ResponseStatus } from '../global-interfaces/response-status.interface'
  * @param withTotal - specify whether or not to include total key
  */
 
-export const responseOk = (message: string, content?: Object | string | []): ResponseStatus => {
+export const responseOk = (message: string, content?: Object | string | [], paginationData?: PaginationData): ResponseStatus => {
     
     let totalCount = 0;
 
     return { 
         success: true,
         statusCode: STATUS_CODE.OK,
-        totalRecords: content.constructor === Array ? content.length : 1,  
+        totalRecordsFound: content.constructor === Array ? content.length : 1, 
+        paginationData: paginationData, 
         message: message,
         content: content
     }
